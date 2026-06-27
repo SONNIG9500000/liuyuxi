@@ -1,0 +1,315 @@
+\documentclass[twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage{graphicx}
+\graphicspath{{./figures/}}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+% ---- Column & line number spacing tweaks ----
+\setlength{\columnsep}{24pt}      % space between the two columns (default ~10pt)
+\usepackage[switch]{lineno}       % 'switch' puts line numbers on outer margins
+\setlength\linenumbersep{8pt}     % gap between line numbers and text
+
+
+%%%%%% Bibliography %%%%%%
+% Replace "sample" in the \addbibresource line below with the name of your .bib file.
+\usepackage[
+  style=nejm, 
+  citestyle=numeric-comp,
+  sorting=none
+]{biblatex}
+\addbibresource{sample.bib}
+
+%%%%%% Title %%%%%%
+% Full titles can be a maximum of 100 characters, including spaces. 
+% Title Format: Use title case, capitalizing the first letter of each word, except for certain small words, such as articles and short prepositions
+\title{Machine Learning-Based Mortality Prediction in Heart Failure Patients Using Clinical Records}
+
+%%%%%% Authors %%%%%%
+% Authors should be listed in order of contribution to the paper, by first name, then middle initial (if any), followed by last name.
+% Authors should be listed in the order in which they will appear in the published version if the manuscript is accepted. 
+% Use an asterisk (*) to identify the corresponding author, and be sure to include that person’s e-mail address. Use symbols (in this order: †, ‡, §, ||, ¶, #, ††, ‡‡, etc.) for author notes, such as present addresses, “These authors contributed equally to this work” notations, and similar information.
+% You can include group authors, but please include a list of the actual authors (the group members) in the Supplementary Materials.
+\author{Yuxi Liu}
+
+
+%%%%%% Affiliations %%%%%%
+\affil[1]{Department of JBJI, JNU, Guangzhou, China.}
+
+
+%%%%%% Date %%%%%%
+% Date is optional
+\date{Jun 2026}
+
+%%%%%% Spacing %%%%%%
+% For a proof-style two-column layout, a mild stretch often looks good.
+% You can change 1.15 to 1.0 for true single spacing, or back to \onehalfspacing.
+\setstretch{1.15}
+
+\begin{document}
+\twocolumn[
+\begin{@twocolumnfalse}
+
+\maketitle
+
+%%%%%% Abstract (two-column) %%%%%%
+\begin{abstract}
+
+Heart failure is associated with high mortality and requires accurate risk assessment to support clinical decision-making. This study investigates the effectiveness of machine learning methods for mortality prediction using the Heart Failure Clinical Records dataset containing 299 patients and 12 clinical variables.
+
+Three models, including Logistic Regression, Random Forest, and Multi-Layer Perceptron, were developed and evaluated using an 80:20 train-test split. Model performance was assessed using accuracy, F1-score, receiver operating characteristic (ROC) curves, and the area under the curve (AUC).
+
+The Random Forest model achieved the best performance with an AUC of 0.883, followed by Logistic Regression with an AUC of 0.859, while the Multi-Layer Perceptron showed inferior performance with an AUC of 0.657. Feature importance analysis identified follow-up time, serum creatinine, and ejection fraction as the most influential predictors.
+
+The results demonstrate that traditional machine learning methods can provide reliable mortality prediction using routinely collected clinical variables, and Random Forest may serve as an effective tool for clinical risk stratification in heart failure patients.
+
+\end{abstract}
+\vspace{1em}
+\end{@twocolumnfalse}
+]
+
+
+%%%%%%%%%%%%%%% Main Text %%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Heart failure (HF) is a complex clinical syndrome characterized by impaired cardiac function and insufficient blood supply to meet the metabolic demands of the body. Despite substantial advances in diagnosis and treatment, heart failure remains one of the leading causes of hospitalization and mortality worldwide.\cite{esc2021} The increasing prevalence of cardiovascular diseases and the aging population continue to impose a significant burden on healthcare systems.
+
+Accurate assessment of mortality risk is essential for individualized treatment and clinical decision-making. Traditional risk stratification methods often rely on physician experience or conventional statistical models, which may not adequately capture the complex relationships among multiple clinical variables. Recent developments in electronic health records and machine learning techniques have created new opportunities for data-driven prognostic prediction.
+
+Machine learning algorithms have demonstrated promising performance in various cardiovascular applications, including disease diagnosis, outcome prediction, and risk stratification.\cite{bzdok2018} Previous studies have shown that clinical variables such as serum creatinine and ejection fraction are strongly associated with mortality in patients with heart failure.\cite{chicco2020} Moreover, several machine learning methods have achieved satisfactory predictive performance using routinely collected clinical data. 
+
+However, the effectiveness of different machine learning approaches on relatively small structured clinical datasets remains unclear. In particular, the advantages of complex neural network models over traditional machine learning methods are still under debate. Furthermore, identifying clinically interpretable predictors is essential for improving the acceptance of artificial intelligence systems in healthcare.
+
+Therefore, this study performs a comparative analysis of three machine learning models, including Logistic Regression, Random Forest, and Multi-Layer Perceptron, using the Heart Failure Clinical Records dataset. Correlation analysis, statistical testing, feature importance analysis, and model evaluation were conducted to investigate both predictive performance and clinical relevance.
+
+The main contributions of this study are summarized as follows:
+
+\begin{itemize}
+
+\item Multiple machine learning models were developed and systematically compared for heart failure mortality prediction.
+
+\item Statistical analysis and feature importance evaluation were combined to identify major prognostic factors.
+
+\item The predictive ability of a neural network model was investigated on a small clinical dataset.
+
+\item An interpretable machine learning framework was established to support risk assessment and clinical decision-making.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Materials and Methods}
+
+\subsection{Dataset}
+
+The Heart Failure Clinical Records dataset was used in this study. The dataset contains medical records of 299 heart failure patients collected during clinical follow-up. Each patient record includes 12 clinical variables and one binary outcome variable indicating whether the patient died during the follow-up period.
+
+The clinical variables include age, anaemia, creatinine phosphokinase, diabetes, ejection fraction, high blood pressure, platelets, serum creatinine, serum sodium, sex, smoking status, and follow-up time. The target variable, DEATH\_EVENT, represents patient survival status.
+
+The dataset contains no missing values and has been widely used as a benchmark dataset for heart failure mortality prediction studies.
+
+\subsection{Data Preprocessing}
+
+Data preprocessing was conducted before model training. Missing values were examined using the \texttt{isnull()} function, and no missing observations were identified.
+
+Continuous variables were further inspected using boxplots to identify potential outliers. Several extreme values were observed, particularly for platelet counts and creatinine phosphokinase levels. Since these values may reflect actual clinical conditions, they were retained for analysis.
+
+Correlation analysis was performed to investigate relationships among variables and mortality outcomes.
+
+For Logistic Regression and Multi-Layer Perceptron models, feature standardization was performed using the StandardScaler method. Random Forest was trained using the original feature values because tree-based algorithms are generally insensitive to feature scaling.
+
+The dataset was randomly divided into training and testing subsets using an 80:20 ratio. Stratified sampling was adopted to preserve the distribution of mortality outcomes.
+
+\subsection{Statistical Analysis}
+
+Independent sample t-tests were performed to compare selected clinical variables between surviving and deceased patients.
+
+Variables with p-values much less than 0.05 were considered statistically significant.
+
+Feature importance analysis was further conducted using Random Forest to identify major predictors associated with mortality.
+
+\subsection{Machine Learning Models}
+
+Three machine learning algorithms were implemented.
+
+\subsubsection{Logistic Regression}
+
+Logistic Regression is a classical statistical learning method widely used for binary classification.
+
+The probability of mortality can be expressed as
+\begin{equation}
+    \frac{1}{1+e^{-(\beta_0+\beta_1x_1+\beta_2x_2+\cdots+\beta_nx_n)}}
+\end{equation}
+
+
+where $x_i$ represents the clinical features and $\beta_i$ denotes the corresponding coefficients.
+
+\subsubsection{Random Forest}
+
+Random Forest is an ensemble learning algorithm that constructs multiple decision trees and combines their predictions.\cite{hastie2001}
+
+This approach can capture nonlinear relationships among clinical variables and is relatively robust to outliers and feature scaling.
+
+\subsubsection{Multi-Layer Perceptron}
+
+A Multi-Layer Perceptron neural network was implemented as an additional deep learning model.
+
+The network consisted of two hidden layers containing 16 and 8 neurons, respectively. The ReLU activation function and early stopping strategy were employed during training.
+
+\subsection{Performance Evaluation}
+
+Model performance was evaluated using accuracy, precision, recall, F1-score, and the area under the receiver operating characteristic curve (AUC).
+
+The F1-score is defined as
+\begin{equation}
+    2 \cdot \frac{\text{Precision}\times\text{Recall}}{\text{Precision}+\text{Recall}}
+\end{equation}
+
+Receiver operating characteristic (ROC) curves were generated to compare the discriminative ability of different models.
+
+AUC values closer to 1 indicate better classification performance.
+
+\subsection{Workflow of the Proposed Method}
+
+Figure~\ref{fig1} illustrates the overall workflow of the proposed heart failure prediction framework.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/ai_workflow.png}
+\caption{Workflow of the proposed machine learning framework for heart failure mortality prediction.}
+\label{fig1}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results}
+
+\subsection{Descriptive Statistics}
+
+The dataset consisted of 299 patients with heart failure, including both surviving and deceased individuals during follow-up. The clinical variables included demographic characteristics, laboratory measurements, comorbidities, and follow-up information.
+
+Table~\ref{tab1} summarizes the performance of the three machine learning models.
+
+\subsection{Correlation Analysis}
+
+Correlation analysis was conducted to investigate the relationships among clinical variables and mortality outcomes. Figure~\ref{fig2} illustrates the correlation matrix.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/correlation_heatmap.png}
+\caption{Correlation heatmap of clinical variables.}
+\label{fig2}
+\end{figure}
+
+The strongest negative correlation with mortality was observed for follow-up time, while serum creatinine and age showed positive correlations with death events. Ejection fraction and serum sodium demonstrated negative associations with mortality.
+
+\subsection{Outlier Analysis}
+
+Boxplots of continuous variables are presented in Figure~\ref{fig3}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/boxplots.png}
+\caption{Boxplots of numerical clinical variables.}
+\label{fig3}
+\end{figure}
+
+Several variables exhibited extreme values, particularly platelet counts and creatinine phosphokinase. These observations were retained because they may reflect genuine clinical conditions.
+
+\subsection{Statistical Analysis}
+
+Independent sample t-tests revealed statistically significant differences between surviving and deceased patients.
+
+Age, ejection fraction, serum creatinine, and serum sodium all demonstrated significant differences with p-values less than 0.05, indicating that these variables are strongly associated with mortality outcomes.
+
+\subsection{Feature Importance}
+
+Feature importance analysis was performed using the Random Forest model.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/feature_importance.png}
+\caption{Feature importance obtained from the Random Forest model.}
+\label{fig4}
+\end{figure}
+
+The three most important predictors were follow-up time, serum creatinine, and ejection fraction. These findings are consistent with previous studies reporting that renal dysfunction and impaired cardiac function are major prognostic factors in heart failure patients.\cite{chicco2020}
+
+\subsection{Model Performance}
+
+The performance of the three machine learning models is summarized in Table~\ref{tab1}.
+
+\begin{table}[h]
+\centering
+\caption{Performance comparison of different models.}
+\label{tab1}   % 建议给标签起个有意义的名字
+
+\begin{tabular}{lcc}
+\toprule
+Model & Accuracy & AUC \\ 
+\midrule
+Logistic Regression & 0.817 & 0.859 \\ 
+Random Forest & 0.817 & 0.883 \\        
+Multi-Layer Perceptron & 0.650 & 0.657 \\ 
+\bottomrule
+\end{tabular}
+
+\end{table}
+
+Random Forest achieved the highest AUC value of 0.883, indicating the best discrimination ability among the evaluated models. Logistic Regression produced comparable classification accuracy, whereas the Multi-Layer Perceptron exhibited substantially lower predictive performance.
+
+\subsection{ROC Curve Analysis}
+
+Receiver operating characteristic curves are shown in Figure~\ref{fig5}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/roc_curve.png}
+\caption{ROC curves of Logistic Regression, Random Forest, and MLP models.}
+\label{fig5}
+\end{figure}
+
+The Random Forest model demonstrated the largest area under the curve, followed by Logistic Regression. The neural network model showed relatively poor discrimination ability.
+
+\subsection{Case Prediction}
+
+A simulated patient with advanced age, reduced ejection fraction, elevated serum creatinine, and shortened follow-up time was evaluated using the trained Logistic Regression model.
+
+The predicted mortality probability reached approximately 90.6\%, suggesting that the proposed model can provide individualized risk assessment for clinical decision support.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Discussion}
+
+This study demonstrates that classical machine learning methods, particularly Random Forest and Logistic Regression, outperform Multi-Layer Perceptron on a small structured heart failure dataset. This finding is consistent with existing literature showing that ensemble tree-based models are often more robust than deep learning methods in tabular clinical data settings, especially when sample sizes are limited.
+
+The superior performance of Random Forest (AUC = 0.883) can be attributed to its ability to model nonlinear feature interactions while maintaining robustness to noise and feature scaling. Logistic Regression also achieved competitive performance (AUC = 0.859), suggesting that the relationship between clinical variables and mortality risk retains a largely linear or mildly nonlinear structure, which is common in clinical risk prediction tasks.
+
+In contrast, the poor performance of the Multi-Layer Perceptron (AUC = 0.657) highlights a well-known limitation of neural networks in small-sample tabular datasets.\cite{rajkomar2018} Deep learning models typically require large-scale data to generalize effectively and are prone to overfitting in low-data regimes. Similar observations have been reported in previous heart failure prediction studies, where traditional machine learning methods often match or outperform neural networks.
+
+Clinically, the identification of serum creatinine, ejection fraction, and follow-up time as key predictors is consistent with established medical knowledge, confirming the validity of the model outputs. Overall, these findings support the use of interpretable machine learning models for clinical risk stratification in heart failure patients, particularly when data availability is limited.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusion}
+
+This study compared three machine learning models for mortality prediction in heart failure patients using structured clinical records. The results demonstrate that Random Forest and Logistic Regression outperform Multi-Layer Perceptron in this small tabular dataset, with Random Forest achieving the best discrimination performance (AUC = 0.883).
+
+The findings highlight that serum creatinine, ejection fraction, and follow-up time are the most important predictive factors, consistent with established clinical knowledge. In contrast, the neural network model showed limited performance, indicating that deep learning methods may not be optimal for small-scale structured medical datasets.
+
+Overall, the study confirms that interpretable machine learning models such as Random Forest provide reliable and clinically meaningful predictions for heart failure mortality risk assessment, and may support decision-making in clinical practice.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\printbibliography
+
+\end{document}
